@@ -16,6 +16,11 @@ request.onsuccess = function( event ) {
 request.onupgradeneeded = function( event ) {
 	console.log('upgrading...')
 	var db = event.target.result
-	var objectStore = db.createObjectStore( "currentsubj", {keyPath: "name"} )
-	var subjectObSt = db.createObjectStore( "subj", {keyPath: "name"} )
+
+	var subjObSt = db.createObjectStore( "subj", { keyPath: "id" } )
+	var subjBMIObSt = db.createObjectStore( "subjBmi", { keyPath: "id" }, {autoIncrement: true} )
+	var subjKgsObSt = db.createObjectStore( "subjKgs", { keyPath: "id" }, {autoIncrement: true} )
+	var subjCmsObSt = db.createObjectStore( "subjCms", { keyPath: "id" }, {autoIncrement: true} )
+
+	var dSubjObSt = db.createObjectStore( "dSubj", { keyPath: "id" } )
 }
