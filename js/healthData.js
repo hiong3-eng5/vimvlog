@@ -6,7 +6,75 @@ class CDC {
 	}
 
 	getData() {
-		console.log( kgData() )
+		var bmi=BMIdata()
+	//	console.log(bmi.m.g05)
+		console.log(bmi)
+		var data = {
+			
+			data: {
+				labels: [
+					'2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
+					'12', '13', '14', '15', '16', '17', '18', '19', '20'
+				],
+				datasets: [
+					{
+						label: 'progress',
+						data: [{x:2.5, y:13.5}, {x:2.75, y:15.5}, {x:3.1, y:16.75}, {x:4.1, y:17.85}],
+						backgroundColor:'rgba(20,40,20,0.5)',
+						borderColor:'rgba(20,20,20,0.3)',
+						borderWidth: 1,
+						type: 'scatter'
+					}, {
+						label: '',
+						data: [{x:2.5, y:13.5}, {x:2.75, y:15.5}, {x:3.1, y:16.75}, {x:4.1, y:17.85}],
+					//	backgroundColor:'rgba(20,40,20,0.5)',
+					//	borderColor:'rgba(20,20,20,0.3)',
+						borderWidth: 2,
+						type: 'line'
+					}, {
+						label: '5 percentile',
+						data: [
+							bmi.m.g05[2], bmi.m.g05[3], bmi.m.g05[4], bmi.m.g05[5], bmi.m.g05[6],
+							bmi.m.g05[7], bmi.m.g05[8], bmi.m.g05[9], bmi.m.g05[10], bmi.m.g05[11],
+							bmi.m.g05[12], bmi.m.g05[13], bmi.m.g05[14], bmi.m.g05[15], bmi.m.g05[16],
+							bmi.m.g05[17], bmi.m.g05[18], bmi.m.g05[19], bmi.m.g05[20]
+						],
+					//	backgroundColor:'rgba(54,162,235,2)',
+						borderColor:'rgba(54,162,235,1)',
+						backgroundColor:'#345678',
+						borderWidth: 2,
+						type: 'line'
+					}, {
+						label: '10 percentile',
+						data: [
+							bmi.m.g10[2], bmi.m.g10[3], bmi.m.g10[4], bmi.m.g10[5], bmi.m.g10[6],
+							bmi.m.g10[7], bmi.m.g10[8], bmi.m.g10[9], bmi.m.g10[10], bmi.m.g10[11],
+							bmi.m.g10[12], bmi.m.g10[13], bmi.m.g10[14], bmi.m.g10[15], bmi.m.g10[16],
+							bmi.m.g10[17], bmi.m.g10[18], bmi.m.g10[19], bmi.m.g10[20]
+						],
+						backgroundColor:'rgba(255,206,86,2)',
+						borderColor:'rgba(255,206,86,1)',
+						borderWidth: 2,
+						type: 'line'
+					}, {
+						label: '25 percentile',
+						data: [
+							bmi.m.g25[2], bmi.m.g25[3], bmi.m.g25[4], bmi.m.g25[5], bmi.m.g25[6],
+							bmi.m.g25[7], bmi.m.g25[8], bmi.m.g25[9], bmi.m.g25[10], bmi.m.g25[11],
+							bmi.m.g25[12], bmi.m.g25[13], bmi.m.g25[14], bmi.m.g25[15], bmi.m.g25[16],
+							bmi.m.g25[17], bmi.m.g25[18], bmi.m.g25[19], bmi.m.g25[20]
+						],
+						backgroundColor:'rgba(255,206,86,2)',
+						borderColor:'rgba(255,206,86,1)',
+						borderWidth: 2,
+						type: 'line'
+					}
+				]
+			}
+		}
+		console.log( data )
+		var ctx = document.getElementById('myChart');
+		var myChart = new Chart( ctx, data );
 	}
 
 }
