@@ -6,7 +6,6 @@ class CDC {
 	}
 
 	getData() {
-		console.log( kgData() )
 	}
 
 }
@@ -192,6 +191,10 @@ function BMIdata() {
 				19:31,
 				20:31.8
 			},
+			"critHigh":{
+				2:35,
+				20:35
+			}
 		},
 		"m":{
 			"critLow":{
@@ -366,6 +369,10 @@ function BMIdata() {
 				19:29.7,
 				20:30.6
 			},
+			"critHigh":{
+				2:35,
+				20:35
+			}
 		}
 
 	}
