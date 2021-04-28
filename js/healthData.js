@@ -18,6 +18,7 @@ function BMIdata() {
 
 	return {
 		"comment":"values are my own approximation of the CDC graphs only; g5=highNorm; g85=high; g95=critHigh",
+		"source:https://www.cdc.gov/healthyweight/assessing/bmi/childrens_bmi/about_childrens_bmi.html",
 		"f":{
 			"critLow":{
 				2:11,
