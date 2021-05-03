@@ -3,6 +3,7 @@ function testSubj() {
 		"sub":"jt",
 		"bdy":"2011-08-31",
 		"bsx":"m",
+		"eng":true,
 		"kg":{
 			'2013-11-22':13.34,
 			'2014-10-10':19.5,
@@ -54,7 +55,8 @@ function testSubj() {
 			'2020-12-31':55.7,
 			'2021-01-31':57.3,
 			'2021-02-28':58.6,
-			'2021-03-31':59.59
+			'2021-03-31':59.59,
+			'2021-05-01':60.77
 		},
 		"cm":{
 			'2013-11-22':91.44,
@@ -107,7 +109,8 @@ function testSubj() {
 			'2020-12-31':146,
 			'2021-01-31':146.5,
 			'2021-02-28':147.52,
-			'2021-03-31':147.52
+			'2021-03-31':147.52,
+			'2021-05-01':147.8
 		}
 	}
 	return subj
@@ -126,12 +129,20 @@ function getSubjBMIdata( kg, cm, bdy ) {
 	return data
 }
 
-function getSubjValueData( value, bdy ) {
+function getSubjValueData( value, bdy, eng, dType ) { eng=eng||false; dType=dType||null
 	var i = 0
 	var data = []
+	var typeVal = 1
 	while( Object.keys(value)[i] ) {
 		var mKey = Object.keys(value)[i]
-		data[i] = { x:moment(bdy).diff(mKey, 'year', true) * -1, y:value[mKey] }
+		var mKeyVal = value[mKey]
+		if(eng==true && dType != null) {
+			switch(dType) {
+				case 'inch':mKeyVal= cm2in(value[mKey]);break
+				case 'lb':mKeyVal= kg2lb(value[mKey]);break
+			}
+		}
+		data[i] = { x:moment(bdy).diff(mKey, 'year', true) * -1, y:mKeyVal }
 		i++
 	}
 	return data
@@ -141,22 +152,74 @@ function getBMIm( kg, cm ) {
 	return ( kg / (cm * cm) ) * 10000
 }
 
-function getCdcPlotData( data ) {
+function cm2in( cm ) {
+	return cm/2.54
+}
+
+function kg2lb( kg ) {
+	return kg / 0.453592737
+}
+
+function getCdcPlotData( data, eng, dType ) { eng=eng||false; dType=dType||null
 	var i = 2
 	var ii = 0
 	var nData = []
 	while( i < 21 ) {
-		nData[ii] = data[i]
+		dData = data[i]
+		if(eng==true && dType != null) {
+			switch(dType) {
+				case 'inch':var dData= cm2in(dData);break
+				case 'lb':var dData= kg2lb(dData);break
+			}
+		}
+		nData[ii] = dData
+	//	console.log(dData)
 		i++
 		ii++
 	}
 	return nData
 }
 
+function getSubjDataSet( dLabel, dData ) {
+	return {
+		label: dLabel,
+		data: dData,
+		backgroundColor:'rgba(2,4,2,0.1)',
+		borderColor:'rgba(20,20,20,0.85)',
+		borderWidth: 0.5,
+		showLine:true,
+		pointRadius: 1.75,
+		type: 'scatter'
+	}
+}
+function getCdcDataSet( percentile, dlabel, data, eng, dType ) { eng=eng||false; dType=dType||null
+	switch(percentile){
+		case 'g05':bg='rgba(255,255,200,0.75)';bdr='rgba(205,205,150,1)';break
+		case 'g10':bg='rgba(175,255,175,0.75)';bdr='rgba(125,205,125,1)';break
+		case 'g25':bg='rgba(175,255,175,0.75)';bdr='rgba(125,205,125,1)';break
+		case 'g50':bg='rgba(175,255,175,0.75)';bdr='rgba(125,205,125,1)';break
+		case 'g75':bg='rgba(255,200,255,0.75)';bdr='rgba(205,150,205,1)';break
+		case 'g90':bg='rgba(255,200,255,0.75)';bdr='rgba(205,150,205,1)';break
+		case 'g95':bg='rgba(255,200,255,0.75)';bdr='rgba(205,150,205,1)';break
+		case 'g85':bg='rgba(175,255,175,0.75)';bdr='rgba(125,205,125,1)';break
+		default:break
+	}
+	return {
+		label: dlabel,
+		data: getCdcPlotData( data, eng, dType ),
+		backgroundColor:bg,
+		borderColor:bdr,
+		borderWidth: 2,
+		pointRadius: 1.5,
+		fill: true,
+		type: 'line'
+	}
+}
+
 function CdcCm() {
 	var cm=cmData()
 	var dSubj = testSubj()
-	var subjData = getSubjValueData(dSubj.cm, dSubj.bdy)
+	var subjData = getSubjValueData(dSubj.cm, dSubj.bdy, dSubj.eng, 'inch')
 	var sx = dSubj.bsx
 	var data = {
 		data: {
@@ -165,79 +228,14 @@ function CdcCm() {
 				'12', '13', '14', '15', '16', '17', '18', '19', '20'
 			],
 			datasets: [
-				{
-					label: dSubj['sub'],
-					data: subjData,
-					backgroundColor:'rgba(2,4,2,0.1)',
-					borderColor:'rgba(20,20,20,0.85)',
-					borderWidth: 0.5,
-					showLine:true,
-					pointRadius: 1.75,
-					type: 'scatter'
-				}, {
-					label: '5 pct',
-					data: getCdcPlotData( cm[sx]['g05'] ),
-					backgroundColor:'rgba(255,255,200,0.75)',
-					borderColor:'rgba(205,205,150,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '10 pct',
-					data: getCdcPlotData( cm[sx]['g10'] ),
-					backgroundColor:'rgba(175,255,175,0.75)',
-					borderColor:'rgba(125,205,125,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '25 pct',
-					data: getCdcPlotData( cm[sx]['g25'] ),
-					backgroundColor:'rgba(175,255,175,0.75)',
-					borderColor:'rgba(125,205,125,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '50 pct',
-					data: getCdcPlotData( cm[sx]['g50'] ),
-					backgroundColor:'rgba(175,255,175,0.75)',
-					borderColor:'rgba(125,205,125,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '75 pct',
-					data: getCdcPlotData( cm[sx]['g75'] ),
-					backgroundColor:'rgba(255,200,255,0.75)',
-					borderColor:'rgba(205,150,205,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '90 pct',
-					data: getCdcPlotData( cm[sx]['g90'] ),
-					backgroundColor:'rgba(255,200,255,0.75)',
-					borderColor:'rgba(205,150,205,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '95 pct',
-					data: getCdcPlotData( cm[sx]['g95'] ),
-					backgroundColor:'rgba(255,200,255,0.75)',
-					borderColor:'rgba(205,150,205,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}
+				getSubjDataSet( dSubj['sub'] + "'s height", subjData ),
+				getCdcDataSet( 'g05', '5 pct', cm[sx]['g05'], dSubj.eng, 'inch' ),
+				getCdcDataSet( 'g10', '10 pct', cm[sx]['g10'], dSubj.eng, 'inch' ),
+				getCdcDataSet( 'g25', '25 pct', cm[sx]['g25'], dSubj.eng, 'inch' ),
+				getCdcDataSet( 'g50', '50 pct', cm[sx]['g50'], dSubj.eng, 'inch' ),
+				getCdcDataSet( 'g75', '75 pct', cm[sx]['g75'], dSubj.eng, 'inch' ),
+				getCdcDataSet( 'g90', '90 pct', cm[sx]['g90'], dSubj.eng, 'inch' ),
+				getCdcDataSet( 'g95', '95 pct', cm[sx]['g95'], dSubj.eng, 'inch' ),
 			],
 			options: {
 				plugins: {
@@ -257,7 +255,7 @@ function CdcCm() {
 function CdcKg() {
 	var kg=kgData()
 	var dSubj = testSubj()
-	var subjData = getSubjValueData(dSubj.kg, dSubj.bdy)
+	var subjData = getSubjValueData(dSubj.kg, dSubj.bdy, dSubj.eng, 'lb')
 	var sx = dSubj.bsx
 	var data = {
 		data: {
@@ -266,79 +264,14 @@ function CdcKg() {
 				'12', '13', '14', '15', '16', '17', '18', '19', '20'
 			],
 			datasets: [
-				{
-					label: dSubj['sub'],
-					data: subjData,
-					backgroundColor:'rgba(2,4,2,0.1)',
-					borderColor:'rgba(20,20,20,0.85)',
-					borderWidth: 0.5,
-					showLine:true,
-					pointRadius: 1.75,
-					type: 'scatter'
-				}, {
-					label: '5 pct',
-					data: getCdcPlotData( kg[sx]['g05'] ),
-					backgroundColor:'rgba(255,255,200,0.75)',
-					borderColor:'rgba(205,205,150,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '10 pct',
-					data: getCdcPlotData( kg[sx]['g10'] ),
-					backgroundColor:'rgba(175,255,175,0.75)',
-					borderColor:'rgba(125,205,125,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '25 pct',
-					data: getCdcPlotData( kg[sx]['g25'] ),
-					backgroundColor:'rgba(175,255,175,0.75)',
-					borderColor:'rgba(125,205,125,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '50 pct',
-					data: getCdcPlotData( kg[sx]['g50'] ),
-					backgroundColor:'rgba(175,255,175,0.75)',
-					borderColor:'rgba(125,205,125,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '75 pct',
-					data: getCdcPlotData( kg[sx]['g75'] ),
-					backgroundColor:'rgba(255,200,255,0.75)',
-					borderColor:'rgba(205,150,205,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '90 pct',
-					data: getCdcPlotData( kg[sx]['g90'] ),
-					backgroundColor:'rgba(255,200,255,0.75)',
-					borderColor:'rgba(205,150,205,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '95 pct',
-					data: getCdcPlotData( kg[sx]['g95'] ),
-					backgroundColor:'rgba(255,200,255,0.75)',
-					borderColor:'rgba(205,150,205,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}
+				getSubjDataSet( dSubj['sub'] + "'s weight", subjData ),
+				getCdcDataSet( 'g05', '5 pct', kg[sx]['g05'], dSubj.eng, 'lb' ),
+				getCdcDataSet( 'g10', '10 pct', kg[sx]['g10'], dSubj.eng, 'lb' ),
+				getCdcDataSet( 'g25', '25 pct', kg[sx]['g25'], dSubj.eng, 'lb' ),
+				getCdcDataSet( 'g50', '50 pct', kg[sx]['g50'], dSubj.eng, 'lb' ),
+				getCdcDataSet( 'g75', '75 pct', kg[sx]['g75'], dSubj.eng, 'lb' ),
+				getCdcDataSet( 'g90', '90 pct', kg[sx]['g90'], dSubj.eng, 'lb' ),
+				getCdcDataSet( 'g95', '95 pct', kg[sx]['g95'], dSubj.eng, 'lb' ),
 			],
 			options: {
 				plugins: {
@@ -367,52 +300,12 @@ function CdcBmi() {
 				'12', '13', '14', '15', '16', '17', '18', '19', '20'
 			],
 			datasets: [
+				getSubjDataSet( dSubj['sub'] + "'s BMI", subjData ),
+				getCdcDataSet( 'g05', '5 pct', bmi[sx]['g05'] ),
+				getCdcDataSet( 'g10', '10 pct', bmi[sx]['g10'] ),
+				getCdcDataSet( 'g25', '25 pct', bmi[sx]['g25'] ),
+				getCdcDataSet( 'g50', '50 pct', bmi[sx]['g50'] ),
 				{
-					label: dSubj['sub'],
-					data: subjData,
-					backgroundColor:'rgba(2,4,2,0.1)',
-					borderColor:'rgba(20,20,20,0.85)',
-					borderWidth: 0.5,
-					showLine:true,
-					pointRadius: 1.75,
-					type: 'scatter'
-				}, {
-					label: '5 pct',
-					data: getCdcPlotData( bmi[sx]['g05'] ),
-					backgroundColor:'rgba(255,255,200,0.75)',
-					borderColor:'rgba(205,205,150,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '10 pct',
-					data: getCdcPlotData( bmi[sx]['g10'] ),
-					backgroundColor:'rgba(175,255,175,0.75)',
-					borderColor:'rgba(125,205,125,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '25 pct',
-					data: getCdcPlotData( bmi[sx]['g25'] ),
-					backgroundColor:'rgba(175,255,175,0.75)',
-					borderColor:'rgba(125,205,125,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '50 pct',
-					data: getCdcPlotData( bmi[sx]['g50'] ),
-					backgroundColor:'rgba(175,255,175,0.75)',
-					borderColor:'rgba(125,205,125,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
 					label: '75 pct',
 					data: getCdcPlotData( bmi[sx]['g75'] ),
 					backgroundColor:'rgba(175,255,175,0.75)',
@@ -421,34 +314,11 @@ function CdcBmi() {
 					pointRadius: 1.5,
 					fill: true,
 					type: 'line'
-				}, {
-					label: '85 pct',
-					data: getCdcPlotData( bmi[sx]['g85'] ),
-					backgroundColor:'rgba(175,255,175,0.75)',
-					borderColor:'rgba(125,205,125,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '90 pct (overweight)',
-					data: getCdcPlotData( bmi[sx]['g90'] ),
-					backgroundColor:'rgba(255,200,255,0.75)',
-					borderColor:'rgba(205,150,205,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
-					label: '95 pct',
-					data: getCdcPlotData( bmi[sx]['g95'] ),
-					backgroundColor:'rgba(255,200,255,0.75)',
-					borderColor:'rgba(205,150,205,1)',
-					borderWidth: 2,
-					pointRadius: 1.5,
-					fill: true,
-					type: 'line'
-				}, {
+				},
+				getCdcDataSet( 'g85', '85 pct', bmi[sx]['g85'] ),
+				getCdcDataSet( 'g90', '90 pct (overweight)', bmi[sx]['g90'] ),
+				getCdcDataSet( 'g95', '95 pct', bmi[sx]['g95'] ),
+				{
 					label: 'obese',
 					data: [
 						bmi[sx].critHigh[2], bmi[sx].critHigh[2], bmi[sx].critHigh[2], bmi[sx].critHigh[2], bmi[sx].critHigh[2],
