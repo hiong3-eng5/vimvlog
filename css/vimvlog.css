@@ -1,0 +1,56 @@
+body{
+	margin: 0px;
+	padding: 0px;
+	background-color: #eef;
+ }
+
+/* header */
+
+#header {
+	position: relative;
+	z-index: 30;
+	height: 7em;
+}
+
+#header h1{
+	margin: 0;
+	padding: 0;
+}
+#header h2{
+	margin: 0;
+	padding: 0;
+}
+
+.vimTitle {
+	display:inline;
+	text-shadow: 1px 1px 2px #66c;
+	letter-spacing:1.15px;
+	font-weight:bold;
+	padding: 0px 8px;
+}
+
+.navbar {
+	display:inline;
+	border-style:ridge ridge none groove;
+	border-width:3px 3px 0px 3px;
+	border-color:#aad #aad #fff #eef;
+	padding: 0px 7px 0px 7px;
+	margin-right:-6.6px;
+}
+
+.navbar-r {
+	display:inline;
+	border-style:ridge ridge none groove;
+	border-width:3px 3px 0px 3px;
+	border-color:#aad #aad #fff #eef;
+	padding: 0px 7px 0px 7px;
+	float:right;
+	margin-top:-2px;
+	margin-left:-3px;
+}
+
+.main {
+	background:#e0e0ef;
+	border-top-style:groove;
+	border-color:#dedeef;
+}
