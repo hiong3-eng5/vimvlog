@@ -5,21 +5,22 @@
 <meta charset="utf-8"><title>Vim VLog</title>
 	<link rel="stylesheet" type="text/css" href="css/vimvlog.css" />
 	<script type="text/javascript" src="js/chart.js"></script>
+	<script type="text/javascript" src="js/moment.js"></script>
 	<script type="text/javascript" src="js/db.js"></script>
+	<script type="text/javascript" src="js/temp.js"></script>
 	<script type="text/javascript" src="js/healthData.js"></script>
 	<script type="text/javascript" src="js/vimchart.js"></script>
-	<script type="text/javascript" src="js/chart.js"></script>
-	<script type="text/javascript" src="js/moment.js"></script>
+	<script type="text/javascript" src="js/vmain.js"></script>
 </head>
 
-<body onload='CdcKg();CdcCm();CdcBmi();'>
+<body onload='getvStatus()'>
 
 	<div class="header">
 		<span class="vimTitle">VimVlog</span> 
-		<span class="navbar">summary</span>
-		<span class="navbar">height</span>
-		<span class="navbar">weight</span>
-		<span class="navbar">bmi</span>
+		<span class="navbar" onclick="getvStatus()">status</span>
+		<span class="navbar" onclick="getvHeight()">height</span>
+		<span class="navbar" onclick="getvWeight()">weight</span>
+		<span class="navbar" onclick="getvBmi()">bmi</span>
 		<div class="navbar-r">add</div>
 		<div class="navbar-r">jt</div>
 	</div>
