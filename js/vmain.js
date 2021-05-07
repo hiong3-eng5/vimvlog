@@ -1,15 +1,26 @@
+function resetCharts() {
+	document.getElementById('cmChart').innerHtml = ''
+	document.getElementById('cmChart').style.display = 'none'
+	document.getElementById('kgChart').innerHtml = ''
+	document.getElementById('kgChart').style.display = 'none'
+	document.getElementById('bmiChart').innerHtml = ''
+	document.getElementById('bmiChart').style.display = 'none'
+}
+
 function getvStatus() {
+	resetCharts()
 	var dSubj = getvSubjData()
 	var below20 = checkIfHasBelow20Data(dSubj.bdy,dSubj.datemin);
 	if (below20) {
 		// todo: provide a way to check if there are data for kg, cm and bmi
-		CdcKg(dSubj)
 		CdcCm(dSubj)
+		CdcKg(dSubj)
 		CdcBmi(dSubj)
 	}
 }
 
 function getvHeight() {
+	resetCharts()
 	var dSubj = getvSubjData()
 	var below20 = checkIfHasBelow20Data(dSubj.bdy,dSubj.datemin);
 	if (below20) {
@@ -19,20 +30,22 @@ function getvHeight() {
 }
 
 function getvWeight() {
+	resetCharts()
 	var dSubj = getvSubjData()
 	var below20 = checkIfHasBelow20Data(dSubj.bdy,dSubj.datemin);
 	if (below20) {
 		// todo: provide a way to check if there are data for kg
-		CdcCm(dSubj)
+		CdcKg(dSubj)
 	}
 }
 
 function getvBmi() {
+	resetCharts()
 	var dSubj = getvSubjData()
 	var below20 = checkIfHasBelow20Data(dSubj.bdy,dSubj.datemin);
 	if (below20) {
 		// todo: provide a way to check if there are data for bmi
-		CdcCm(dSubj)
+		CdcBmi(dSubj)
 	}
 }
 

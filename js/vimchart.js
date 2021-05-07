@@ -11,7 +11,6 @@ function getCdcPlotData( data, eng, dType ) { eng=eng||false; dType=dType||null
 			}
 		}
 		nData[ii] = dData
-	//	console.log(dData)
 		i++
 		ii++
 	}
@@ -22,9 +21,9 @@ function getSubjDataSet( dLabel, dData ) {
 	return {
 		label: dLabel,
 		data: dData,
-		backgroundColor:'rgba(2,4,2,0.1)',
+		backgroundColor:'rgba(2,4,2,0.4)',
 		borderColor:'rgba(20,20,20,0.85)',
-		borderWidth: 0.5,
+		borderWidth: 0.6,
 		showLine:true,
 		pointRadius: 1.75,
 		type: 'scatter'
@@ -55,6 +54,10 @@ function getCdcDataSet( percentile, dlabel, data, eng, dType ) { eng=eng||false;
 }
 
 function CdcCm(dSubj) {
+	if(window.cmChart instanceof Chart) {
+		window.cmChart.destroy()
+	}
+	document.getElementById('cmChart').style.display = "block"
 	var cm=cmData()
 	var subjData = getSubjValueData(dSubj.cm, dSubj.bdy, dSubj.eng, 'inch')
 	var sx = dSubj.bsx
@@ -86,10 +89,14 @@ function CdcCm(dSubj) {
 		}
 	}
 	var ctx = document.getElementById('cmChart');
-	var myChart = new Chart( ctx, data );
+	window.cmChart = new Chart( ctx, data );
 }
 
 function CdcKg(dSubj) {
+	if(window.kgChart instanceof Chart) {
+		window.kgChart.destroy()
+	}
+	document.getElementById('kgChart').style.display = "block"
 	var kg=kgData()
 	var subjData = getSubjValueData(dSubj.kg, dSubj.bdy, dSubj.eng, 'lb')
 	var sx = dSubj.bsx
@@ -121,10 +128,14 @@ function CdcKg(dSubj) {
 		}
 	}
 	var ctx = document.getElementById('kgChart');
-	var myChart = new Chart( ctx, data );
+	window.kgChart = new Chart( ctx, data );
 }
 
 function CdcBmi(dSubj) {
+	if(window.bmiChart instanceof Chart) {
+		window.bmiChart.destroy()
+	}
+	document.getElementById('bmiChart').style.display = "block"
 	var bmi=BMIdata()
 	var subjData = getSubjBMIdata(dSubj.kg, dSubj.cm, dSubj.bdy)
 	var sx = dSubj.bsx
@@ -181,5 +192,5 @@ function CdcBmi(dSubj) {
 		}
 	}
 	var ctx = document.getElementById('bmiChart');
-	var myChart = new Chart( ctx, data );
+	window.bmiChart = new Chart( ctx, data );
 }
