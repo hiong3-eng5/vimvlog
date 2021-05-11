@@ -23,8 +23,9 @@ function getSubjDataSet( dLabel, dData ) {
 		data: dData,
 		backgroundColor:'rgba(2,4,2,0.4)',
 		borderColor:'rgba(20,20,20,0.85)',
-		borderWidth: 0.6,
+		borderWidth: 0.8,
 		showLine:true,
+		tension:0.3,
 		pointRadius: 1.75,
 		type: 'scatter'
 	}
@@ -48,8 +49,44 @@ function getCdcDataSet( percentile, dlabel, data, eng, dType ) { eng=eng||false;
 		borderColor:bdr,
 		borderWidth: 2,
 		pointRadius: 1.5,
+		tension:0.3,
 		fill: true,
 		type: 'line'
+	}
+}
+
+function getOptions( subj, wai, ex ) {
+	return {
+		layout: {
+			padding: 20
+		},
+		responsive: true,
+		scales: {
+			y: {
+				title: {
+					display: true,
+					text: wai
+				}
+			},
+			x: {
+				title: {
+					display: true,
+					text: ex
+				},
+				ticks: {
+					stepSize:1
+				}
+			}
+		},
+		plugins: {
+			legend: {
+				position: 'right',
+			},
+			title: {
+				display: true,
+				text: subj + "'s " + wai
+			}
+		}
 	}
 }
 
@@ -61,6 +98,24 @@ function CdcCm(dSubj) {
 	var cm=cmData()
 	var subjData = getSubjValueData(dSubj.cm, dSubj.bdy, dSubj.eng, 'inch')
 	var sx = dSubj.bsx
+	var optn = getOptions(dSubj.sub, 'Height', 'Age in Years')
+	if(dSubj.eng == true) {
+		ticks = {
+			stepSize:3,
+			callback:function(value,index,values) {
+				return in2ftin(value)
+			}
+		}
+	} else {
+		ticks = {
+			stepSize:5,
+			callback:function(value,index,values) {
+				return value + ' cm'
+			}
+		}
+	}
+	optn.scales.y.ticks = ticks
+	console.log(optn.scales.y)
 	var data = {
 		data: {
 			labels: [
@@ -76,19 +131,13 @@ function CdcCm(dSubj) {
 				getCdcDataSet( 'g75', '75 pct', cm[sx]['g75'], dSubj.eng, 'inch' ),
 				getCdcDataSet( 'g90', '90 pct', cm[sx]['g90'], dSubj.eng, 'inch' ),
 				getCdcDataSet( 'g95', '95 pct', cm[sx]['g95'], dSubj.eng, 'inch' ),
-			],
-			options: {
-				plugins: {
-					title: {
-						display: 1,
-						position: 'top',
-						text: dSubj['sub'] + "'s Height"
-					}
-				}
-			}
-		}
+			]
+		},
+		options: optn
 	}
 	var ctx = document.getElementById('cmChart');
+	ctx.width = 300;
+	ctx.height = 175;
 	window.cmChart = new Chart( ctx, data );
 }
 
@@ -115,19 +164,13 @@ function CdcKg(dSubj) {
 				getCdcDataSet( 'g75', '75 pct', kg[sx]['g75'], dSubj.eng, 'lb' ),
 				getCdcDataSet( 'g90', '90 pct', kg[sx]['g90'], dSubj.eng, 'lb' ),
 				getCdcDataSet( 'g95', '95 pct', kg[sx]['g95'], dSubj.eng, 'lb' ),
-			],
-			options: {
-				plugins: {
-					title: {
-						display: 1,
-						position: 'top',
-						text: dSubj['sub'] + "'s Weight"
-					}
-				}
-			}
-		}
+			]
+		},
+		options: getOptions(dSubj.sub, 'Weight', 'Age in Years')
 	}
 	var ctx = document.getElementById('kgChart');
+	ctx.width = 300;
+	ctx.height = 150;
 	window.kgChart = new Chart( ctx, data );
 }
 
@@ -179,18 +222,12 @@ function CdcBmi(dSubj) {
 					fill: true,
 					type: 'line'
 				}
-			],
-			options: {
-				plugins: {
-					title: {
-						display: 1,
-						position: 'top',
-						text: dSubj['sub'] + "'s BMI"
-					}
-				}
-			}
-		}
+			]
+		},
+		options: getOptions(dSubj.sub, 'BMI', 'Age in Years')
 	}
 	var ctx = document.getElementById('bmiChart');
+	ctx.width = 300;
+	ctx.height = 150;
 	window.bmiChart = new Chart( ctx, data );
 }

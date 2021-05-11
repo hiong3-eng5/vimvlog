@@ -54,3 +54,11 @@ body{
 	border-top-style:groove;
 	border-color:#dedeef;
 }
+
+canvas {
+	border-style: ridge;
+	border-width:3px;
+	border-color: #99d;
+	background:#f0f0ff;
+	margin: 9px;
+}

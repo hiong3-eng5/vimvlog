@@ -105,3 +105,10 @@ function cm2in( cm ) {
 function kg2lb( kg ) {
 	return kg / 0.453592737
 }
+
+function in2ftin( inch ) {
+	var ft = Math.trunc( inch/12 )
+	var remIn = ((inch/12)-ft)*12
+	var ftin = ft+"' "+remIn+'"'
+	return ftin
+}
