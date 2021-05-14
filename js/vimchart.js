@@ -90,6 +90,30 @@ function getOptions( subj, wai, ex ) {
 	}
 }
 
+function cdcTicks(eng,dType) {
+	switch(dType) {
+		case 'Height': if (eng == true) {
+				return ticks = { stepSize:3,callback:function(value,index,values)
+				{return in2ftin(value)} }
+			} else {
+				return ticks = {stepSize:5,callback:function(value,index,values)
+				{return value + ' cm'} }
+			}
+			break;
+		case 'Weight': if (eng == true) {
+				return ticks = { stepSize:5,callback:function(value,index,values)
+				{return value + ' lb'} }
+			} else {
+				return ticks = {stepSize:5,callback:function(value,index,values)
+				{return value + ' kg'} }
+			}
+			break;
+		case 'BMI':
+			return ticks = { stepSize:1 }
+			break;
+	}
+}
+
 function CdcCm(dSubj) {
 	if(window.cmChart instanceof Chart) {
 		window.cmChart.destroy()
@@ -99,23 +123,8 @@ function CdcCm(dSubj) {
 	var subjData = getSubjValueData(dSubj.cm, dSubj.bdy, dSubj.eng, 'inch')
 	var sx = dSubj.bsx
 	var optn = getOptions(dSubj.sub, 'Height', 'Age in Years')
-	if(dSubj.eng == true) {
-		ticks = {
-			stepSize:3,
-			callback:function(value,index,values) {
-				return in2ftin(value)
-			}
-		}
-	} else {
-		ticks = {
-			stepSize:5,
-			callback:function(value,index,values) {
-				return value + ' cm'
-			}
-		}
-	}
+	var ticks = cdcTicks(dSubj.eng,'Height');
 	optn.scales.y.ticks = ticks
-	console.log(optn.scales.y)
 	var data = {
 		data: {
 			labels: [
@@ -149,6 +158,9 @@ function CdcKg(dSubj) {
 	var kg=kgData()
 	var subjData = getSubjValueData(dSubj.kg, dSubj.bdy, dSubj.eng, 'lb')
 	var sx = dSubj.bsx
+	var optn = getOptions(dSubj.sub, 'Weight', 'Age in Years')
+	var ticks = cdcTicks(dSubj.eng,'Weight');
+	optn.scales.y.ticks = ticks
 	var data = {
 		data: {
 			labels: [
@@ -166,7 +178,7 @@ function CdcKg(dSubj) {
 				getCdcDataSet( 'g95', '95 pct', kg[sx]['g95'], dSubj.eng, 'lb' ),
 			]
 		},
-		options: getOptions(dSubj.sub, 'Weight', 'Age in Years')
+		options: optn
 	}
 	var ctx = document.getElementById('kgChart');
 	ctx.width = 300;
@@ -182,6 +194,9 @@ function CdcBmi(dSubj) {
 	var bmi=BMIdata()
 	var subjData = getSubjBMIdata(dSubj.kg, dSubj.cm, dSubj.bdy)
 	var sx = dSubj.bsx
+	var optn = getOptions(dSubj.sub, 'BMI', 'Age in Years')
+	var ticks = cdcTicks(dSubj.eng,'BMI');
+	optn.scales.y.ticks = ticks
 	var data = {
 		data: {
 			labels: [
@@ -224,7 +239,7 @@ function CdcBmi(dSubj) {
 				}
 			]
 		},
-		options: getOptions(dSubj.sub, 'BMI', 'Age in Years')
+		options: optn
 	}
 	var ctx = document.getElementById('bmiChart');
 	ctx.width = 300;
